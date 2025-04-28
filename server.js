@@ -1,34 +1,44 @@
 const http = require('http');
-const url = require('url');
-const express = require('express');
-const session = require('express-session');
+const fs = require('fs');
 const path = require('path');
 
-const app = express();
+const PORT = 80;
 
-// Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static('public')); // Serve static files like CSS & JS
+const server = http.createServer((req, res) => {
+  console.log(`Request for: ${req.url}`);
+  let filePath = '.' + req.url;
+  if (filePath === './') {
+    filePath = './index.html';
+  }
 
-// Session handling
-app.use(session({
-    secret: 'secret-key',
-    resave: false,
-    saveUninitialized: true
-}));
+  const extname = path.extname(filePath).toLowerCase();
+  const mimeTypes = {
+    '.html': 'text/html',
+    '.js': 'application/javascript',
+    '.css': 'text/css',
+    '.png': 'image/png',
+    '.jpg': 'image/jpg',
+    '.ico': 'image/x-icon',
+  };
 
-// Serve login page at "/"
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+  const contentType = mimeTypes[extname] || 'application/octet-stream';
+
+  fs.readFile(filePath, (err, content) => {
+    if (err) {
+      if (err.code == 'ENOENT') {
+        res.writeHead(404, { 'Content-Type': 'text/html' });
+        res.end('<h1>404 Not Found</h1>', 'utf-8');
+      } else {
+        res.writeHead(500);
+        res.end(`Server Error: ${err.code}`);
+      }
+    } else {
+      res.writeHead(200, { 'Content-Type': contentType });
+      res.end(content, 'utf-8');
+    }
+  });
 });
 
-// Temporarily disable SQL functionality
-app.post('/login', (req, res) => {
-    res.json({ success: false, message: "SQL is not set up yet." });
-});
-
-// Start server
-app.listen(80, () => {
-    console.log("Server running on port 3000");
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
