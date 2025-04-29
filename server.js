@@ -1,12 +1,15 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const url = require('url');
 
 const PORT = 80;
 
 const server = http.createServer((req, res) => {
+  const parsedUrl = url.parse(req.url);
   console.log(`Request for: ${req.url}`);
-  let filePath = '.' + req.url;
+
+  let filePath = '.' + parsedUrl.pathname;
   if (filePath === './') {
     filePath = './index.html';
   }

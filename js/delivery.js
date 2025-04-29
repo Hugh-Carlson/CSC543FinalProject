@@ -10,7 +10,8 @@ window.onload = function () {
 };
 
 function showCurrentUserDelivery() {
-  const deliveryStatus = JSON.parse(localStorage.getItem("deliveryStatus"));
+  const currentUser = localStorage.getItem("currentUser");
+  const deliveryStatus = JSON.parse(localStorage.getItem("deliveryStatus_" + currentUser));
 
   if (!deliveryStatus || deliveryStatus.length === 0) {
     window.location.href = "home.html"; // Redirect if no delivery data
