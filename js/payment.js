@@ -16,29 +16,49 @@ document.getElementById('paymentForm').addEventListener('submit', function(e) {
   localStorage.setItem('paymentInfo', JSON.stringify(paymentInfo));
 
   // ✅ Initialize delivery info based on cart
-  const cart = JSON.parse(localStorage.getItem('cart')) || [];
-  const deliveryStatus = cart.map(item => ({
-    name: item.name,
+  const currentUser = localStorage.getItem("currentUser");
+  const cartKey = "cart_" + currentUser;
+  const cart = JSON.parse(localStorage.getItem(cartKey)) || [];
+
+  // 🔁 Count quantities per unique item
+  const itemCounts = {};
+  cart.forEach(item => {
+    if (!itemCounts[item.name]) {
+      itemCounts[item.name] = { ...item, quantity: 1 };
+    } else {
+      itemCounts[item.name].quantity += 1;
+    }
+  });
+
+  // 📦 Build deliveryStatus with quantities
+  const deliveryStatus = Object.values(itemCounts).map(item => ({
+    name: item.quantity > 1 ? `${item.name} (x${item.quantity})` : item.name,
     status: 'Not yet sent',
     eta: Math.floor(Math.random() * 15) + 5,
     deliverer: 'Alex Johnson',
     comment: ''
   }));
 
-  const currentUser = localStorage.getItem("currentUser");
-
   if (currentUser) {
-    // ✅ Save per-user delivery data
-    localStorage.setItem("deliveryStatus_" + currentUser, JSON.stringify(deliveryStatus));
+    // ✅ Load any existing deliveries
+    const existingDeliveriesRaw = localStorage.getItem("deliveryStatus_" + currentUser);
+    let existingDeliveries = existingDeliveriesRaw ? JSON.parse(existingDeliveriesRaw) : [];
 
-    // ✅ If not admin, save general deliveryStatus
+    // ✅ Combine old and new deliveries
+    const updatedDeliveries = existingDeliveries.concat(deliveryStatus);
+
+    // ✅ Save the updated list
+    localStorage.setItem("deliveryStatus_" + currentUser, JSON.stringify(updatedDeliveries));
+
     const isAdmin = localStorage.getItem("isAdmin") === "true";
+
+    // ✅ Also update general deliveryStatus if not admin
     if (!isAdmin) {
-      localStorage.setItem("deliveryStatus", JSON.stringify(deliveryStatus));
+      localStorage.setItem("deliveryStatus", JSON.stringify(updatedDeliveries));
     }
 
     // ✅ Clear the cart
-    localStorage.removeItem('cart');
+    localStorage.removeItem(cartKey);
 
     // ✅ Redirect to delivery page
     window.location.href = "../html/delivery.html";
