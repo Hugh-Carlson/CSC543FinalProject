@@ -78,7 +78,10 @@ function loadItems() {
         <div class="card p-3">
           <h5>${item.name}</h5>
           <p>$${item.price.toFixed(2)}</p>
-          <button class="btn btn-sm btn-primary" onclick="addToCart(${index})">Add to Cart</button>
+
+          <img src="${item.imageUrl}" alt="${item.name}" class="card-img-top mb-2" style="max-height: 150px; object-fit: cover;">
+          
+	  <button class="btn btn-sm btn-primary" onclick="addToCart(${index})">Add to Cart</button>
         </div>
       </div>`;
   });
