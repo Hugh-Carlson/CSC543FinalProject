@@ -15,13 +15,13 @@
       <input type="text" class="form-control" id="cardName" placeholder="Cardholder Name" required>
     </div>
     <div class="mb-3">
-      <input type="text" class="form-control" id="cardNumber" placeholder="Card Number" required>
+      <input type="text" class="form-control" id="cardNumber" placeholder="Card Number" required pattern="\d{13,19}" title="Enter a valid card number (13-19 digits)">
     </div>
     <div class="mb-3">
-      <input type="text" class="form-control" id="expiration" placeholder="MM/YY" required>
+      <input type="text" class="form-control" id="expiration" placeholder="MM/YY" required pattern="(0[1-9]|1[0-2])\/\d{2}" title="Format: MM/YY">
     </div>
     <div class="mb-3">
-      <input type="text" class="form-control" id="cvv" placeholder="CVV" required>
+      <input type="text" class="form-control" id="cvv" placeholder="CVV" required pattern="\d{3}" title="Enter a 3-digit CVV">
     </div>
 
     <h5 class="mt-4">Delivery Address</h5>
@@ -29,10 +29,10 @@
       <input type="text" class="form-control" id="dorm" placeholder="Dorm Name" required>
     </div>
     <div class="mb-3">
-      <input type="text" class="form-control" id="room" placeholder="Room Number" required>
+      <input type="text" class="form-control" id="room" placeholder="Room Number" required pattern="\d+" title="Only numbers allowed">
     </div>
     <div class="mb-3">
-      <input type="tel" class="form-control" id="phone" placeholder="Phone Number" required>
+      <input type="tel" class="form-control" id="phone" placeholder="Phone Number" required pattern="\d{3}-\d{3}-\d{4}" title="Format: 123-456-7890">
     </div>
 
     <button type="submit" class="btn btn-success">Confirm Payment</button>
@@ -41,3 +41,4 @@
   <script src="../js/payment.js"></script>
 </body>
 </html>
+

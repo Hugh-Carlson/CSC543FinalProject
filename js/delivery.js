@@ -10,66 +10,65 @@ window.onload = function () {
 };
 
 function showCurrentUserDelivery() {
-  const currentUser = localStorage.getItem("currentUser");
-  const deliveryStatus = JSON.parse(localStorage.getItem("deliveryStatus_" + currentUser));
+  const deliveryStatus = JSON.parse(localStorage.getItem("deliveryStatus"));
 
   if (!deliveryStatus || deliveryStatus.length === 0) {
-    window.location.href = "home.html"; // Redirect if no delivery data
+    window.location.href = "home.html";
     return;
   }
 
-  const deliveryInfoElement = document.getElementById("deliveryInfo");
   const itemsList = document.getElementById("itemsList");
-  const commentsSection = document.getElementById("commentsSection");
+  itemsList.innerHTML = '';
 
   deliveryStatus.forEach((item, index) => {
-    const listItem = `
-      <li class="list-group-item">
-        <strong>${item.name}</strong><br>
-        Status: ${item.status} | ETA: ${item.eta} min | Deliverer: ${item.deliverer}
-      </li>
+    if (!item.comments) item.comments = [];
+
+    const listItem = document.createElement("li");
+    listItem.className = "list-group-item";
+
+    listItem.innerHTML = `
+      <strong>${item.name}</strong><br>
+      Status: ${item.status} | ETA: ${item.eta} min | Deliverer: ${item.deliverer}
+
+      <div class="mt-3">
+        <h6>Comments:</h6>
+        <ul id="comments-${index}" class="list-group mb-2">
+          ${item.comments.map(c => `
+            <li class="list-group-item">
+              <small class="text-muted">${c.time}</small><br>${c.text}
+            </li>`).join('') || "<li class='list-group-item text-muted'>No comments yet.</li>"}
+        </ul>
+
+        <textarea id="input-${index}" class="form-control mb-2" placeholder="Add a comment..." rows="2"></textarea>
+        <button class="btn btn-sm btn-primary" onclick="addComment(${index})">Add Comment</button>
+      </div>
     `;
-    itemsList.innerHTML += listItem;
 
-    if (!item.comment) {
-      item.comment = "";
-    }
+    itemsList.appendChild(listItem);
   });
 
-  document.getElementById("addCommentBtn").addEventListener("click", function () {
-    const commentText = document.getElementById("commentText").value;
-    if (commentText.trim()) {
-      deliveryStatus.forEach(item => {
-        item.comment += (item.comment ? "\n" : "") + commentText;
-      });
-
-      localStorage.setItem("deliveryStatus", JSON.stringify(deliveryStatus));
-      displayComments(deliveryStatus);
-      document.getElementById("commentText").value = "";
-    }
-  });
-
-  displayComments(deliveryStatus);
+  localStorage.setItem("deliveryStatus", JSON.stringify(deliveryStatus));
 }
 
-function displayComments(items) {
-  const commentsSection = document.getElementById("commentsSection");
-  const commentsHTML = items
-    .map(item => item.comment).filter(comment => comment?.trim() !== "")
-    .join("\n\n");
+function addComment(index) {
+  const input = document.getElementById(`input-${index}`);
+  const commentText = input.value.trim();
+  if (!commentText) return;
 
-  commentsSection.innerHTML = `
-    <h4>Comments:</h4>
-    <pre class="bg-light p-2">${commentsHTML || "No comments yet."}</pre>
-  `;
+  const deliveryStatus = JSON.parse(localStorage.getItem("deliveryStatus")) || [];
+  const timestamp = new Date().toLocaleString();
+
+  deliveryStatus[index].comments = deliveryStatus[index].comments || [];
+  deliveryStatus[index].comments.push({ text: commentText, time: timestamp });
+
+  localStorage.setItem("deliveryStatus", JSON.stringify(deliveryStatus));
+  showCurrentUserDelivery();
 }
 
 function showAllDeliveriesForAdmin() {
   const deliveryInfoElement = document.getElementById("deliveryInfo");
   deliveryInfoElement.innerHTML = "<h3>All User Deliveries</h3>";
-
   document.getElementById("itemsList").style.display = "none";
-  document.getElementById("commentsSection").style.display = "none";
 
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i);
@@ -87,7 +86,7 @@ function showAllDeliveriesForAdmin() {
             <li class="list-group-item">
               <strong>${item.name}</strong><br>
               Status: ${item.status} | ETA: ${item.eta} min | Deliverer: ${item.deliverer}
-              ${item.comment ? `<br><em>Comment:</em> ${item.comment}` : ""}
+              ${item.comments?.length ? `<br><em>Comments:</em><ul>${item.comments.map(c => `<li>${c.time}: ${c.text}</li>`).join("")}</ul>` : ""}
             </li>`).join("")}
         </ul>
         <button class="btn btn-danger btn-sm mt-2" onclick="cancelDelivery('${username}')">Cancel All Deliveries</button>
@@ -105,4 +104,3 @@ function cancelDelivery(username) {
     showAllDeliveriesForAdmin();
   }
 }
-
