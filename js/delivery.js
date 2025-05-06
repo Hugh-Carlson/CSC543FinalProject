@@ -10,7 +10,8 @@ window.onload = function () {
 };
 
 function showCurrentUserDelivery() {
-  const deliveryStatus = JSON.parse(localStorage.getItem("deliveryStatus"));
+  const user = localStorage.getItem("currentUser");
+  const deliveryStatus = JSON.parse(localStorage.getItem("deliveryStatus_" + user));
 
   if (!deliveryStatus || deliveryStatus.length === 0) {
     window.location.href = "home.html";
@@ -23,23 +24,37 @@ function showCurrentUserDelivery() {
   deliveryStatus.forEach((item, index) => {
     if (!item.comments) item.comments = [];
 
+    const currentUser = user || "U";
+    const initial = currentUser.charAt(0).toUpperCase();
+
+    const commentsHTML = item.comments.map(c => `
+      <div class="card mb-2">
+        <div class="card-body p-2 d-flex">
+          <div class="me-2">
+            <div class="bg-secondary text-white rounded-circle text-center" style="width:32px; height:32px; line-height:32px;">
+              ${initial}
+            </div>
+          </div>
+          <div>
+            <small class="text-muted">${c.time}</small><br>
+            ${c.text}
+          </div>
+        </div>
+      </div>
+    `).join("") || "<div class='text-muted'>No comments yet.</div>";
+
     const listItem = document.createElement("li");
     listItem.className = "list-group-item";
 
     listItem.innerHTML = `
       <strong>${item.name}</strong><br>
       Status: ${item.status} | ETA: ${item.eta} min | Deliverer: ${item.deliverer}
-
       <div class="mt-3">
         <h6>Comments:</h6>
-        <ul id="comments-${index}" class="list-group mb-2">
-          ${item.comments.map(c => `
-            <li class="list-group-item">
-              <small class="text-muted">${c.time}</small><br>${c.text}
-            </li>`).join('') || "<li class='list-group-item text-muted'>No comments yet.</li>"}
-        </ul>
-
-        <textarea id="input-${index}" class="form-control mb-2" placeholder="Add a comment..." rows="2"></textarea>
+        <div id="comments-${index}" class="mb-2" style="max-height: 200px; overflow-y: auto;">
+          ${commentsHTML}
+        </div>
+        <textarea class="form-control mb-2" id="input-${index}" rows="2" placeholder="Add a comment"></textarea>
         <button class="btn btn-sm btn-primary" onclick="addComment(${index})">Add Comment</button>
       </div>
     `;
@@ -47,21 +62,22 @@ function showCurrentUserDelivery() {
     itemsList.appendChild(listItem);
   });
 
-  localStorage.setItem("deliveryStatus", JSON.stringify(deliveryStatus));
+  localStorage.setItem("deliveryStatus_" + user, JSON.stringify(deliveryStatus));
 }
 
 function addComment(index) {
+  const user = localStorage.getItem("currentUser");
   const input = document.getElementById(`input-${index}`);
   const commentText = input.value.trim();
   if (!commentText) return;
 
-  const deliveryStatus = JSON.parse(localStorage.getItem("deliveryStatus")) || [];
+  const deliveryStatus = JSON.parse(localStorage.getItem("deliveryStatus_" + user)) || [];
   const timestamp = new Date().toLocaleString();
 
   deliveryStatus[index].comments = deliveryStatus[index].comments || [];
   deliveryStatus[index].comments.push({ text: commentText, time: timestamp });
 
-  localStorage.setItem("deliveryStatus", JSON.stringify(deliveryStatus));
+  localStorage.setItem("deliveryStatus_" + user, JSON.stringify(deliveryStatus));
   showCurrentUserDelivery();
 }
 
