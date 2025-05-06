@@ -1,29 +1,71 @@
 
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
   <meta charset="UTF-8">
   <title>Owl Express</title>
-  <link rel="stylesheet" href="./css/homepage_style.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <style>
+  
+    body#homepage_background {
+      background: linear-gradient(to right, lightblue, white);
+      min-height: 100vh;
+    }
+
+    .welcome_banner_background {
+      position: relative;
+      background-image: url('https://th.bing.com/th/id/OIP.PtRGzscsalQkarSNzIHOIQHaHa?rs=1&pid=ImgDetMain');
+      background-size: cover;
+      background-position: center;
+      height: 250px;
+      border-radius: 16px;
+      color: white;
+    }
+
+    .welcome_banner_background::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.45);
+    }
+
+    .welcome_banner_background > div {
+      position: relative;
+      z-index: 1;
+    }
+
+
+   
+  </style>
 </head>
 
-<body class="container mt-5" id="home_page_bg">
+<body class="container mt-5" id="homepage_background">
 
-	<nav class="navbar navbar-light bg-light mb-4">
-  		<div class="container-fluid justify-content-between">
-    		 <a class="navbar-brand" href="#">Campus Store</a>
-    		  <button class="btn btn-outline-primary position-relative" onclick="checkout()">
-      		   🛒
-      		
-		   <span id="cart-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-       		    0
-      		   </span>
-   		  </button>
-  		 </div>
-	</nav>
+  <nav class="navbar navbar-light bg-light mb-4">
+    <div class="container-fluid justify-content-between">
+      <a class="navbar-brand" href="#">Campus Store</a>
+      <button class="btn btn-outline-primary position-relative" onclick="checkout()" aria-label="Checkout">
+        🛒
+        <span id="cart-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+          0
+        </span>
+      </button>
+    </div>
+  </nav>
 
-  <h2>Welcome to The Owl Express</h2>
+  <!-- Hero Section with Background Image -->
+  <div class="welcome_banner_background text-center d-flex align-items-center justify-content-center shadow">
+    <div>
+      <h2 class="display-5 fw-bold">Welcome to <span style="color: #ffc107;">The Owl Express</span></h2>
+      <p class="lead">Your one-stop campus shop. Fast. Friendly. Feathery.</p>
+    </div>
+  </div>
+  
+  <br></br>
 
   <div class="row mb-4" id="store-items"></div>
 
@@ -46,23 +88,15 @@
   </div>
 
   <script src="../js/main.js"></script>
-  
-    <footer style="background-color: #f1f1f1; padding: 30px 20px; text-align: center; color: gray; margin-top: 40px; font-family: sans-serif;">
-    
-  
-    <div style="font-size: 16px;">
-      Contact us at: <a href="mailto:support@owldash.com" style="color: black; text-decoration: underline;">support@owldash.com</a>
-    </div>
-  
-    
-    <img src="https://calendar.southernct.edu/live/resource/image/_i/extras/images/SCSU-logo-blue.rev.1584987060.png" alt="Owl Logo" style="height: 30px; vertical-align: middle; margin-right: 10px;">
+
+  <footer style="background-color: lightgrey; padding: 10px; text-align: center;" class="mt-4">
+    Contact us at:
+    <a href="mailto:support@owldash.com" style="color: black; text-decoration: underline;">support@owldash.com</a>
+    <img src="https://calendar.southernct.edu/live/resource/image/_i/extras/images/SCSU-logo-blue.rev.1584987060.png" alt="Owl Logo" style="height: 30px; vertical-align: middle; margin-left: 10px;">
     <b>© 2025 OwlDash. All rights reserved.</b>
-
-
-    </footer>
-
-
-
+  </footer>
 
 </body>
+
 </html>
+
