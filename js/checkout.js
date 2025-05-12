@@ -36,13 +36,13 @@ function renderCart() {
 
 function removeFromCart(index) {
   cart.splice(index, 1);
-  saveCart(); // ✅ Save using user key
+  saveCart(); // Save using user key
   renderCart();
 }
 
 function clearCart() {
   cart = [];
-  saveCart(); // ✅ Save using user key
+  saveCart(); // Save using user key
   renderCart();
 }
 
@@ -51,11 +51,11 @@ function checkout() {
     alert("Cart is empty.");
     return;
   }
-  saveCart(); // ✅ ensure latest cart is saved
+  saveCart(); // ensure latest cart is saved
   window.location.href = "payment.html";
 }
 
 window.onload = function () {
-  loadCart();   // ✅ Load on page load
+  loadCart();   // Load on page load
   renderCart();
 };
